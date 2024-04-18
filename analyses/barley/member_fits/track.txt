@@ -1,0 +1,1 @@
+ensures that folder is tracked when empty.
