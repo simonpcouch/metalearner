@@ -2,6 +2,8 @@ source_safely <- function(file) {
   tryCatch({source(file); return(TRUE)}, error = function(e) {FALSE})
 }
 
+source("helpers.R")
+
 # prepare datasets and resample member specifications --------------------------
 prepare_files <-
   list.files(
