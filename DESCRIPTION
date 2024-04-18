@@ -1,0 +1,57 @@
+Package: metalearner
+Title: Benchmarking a Generalized Meta-learner
+Version: 0.0.0.9000
+Authors@R: 
+    person("Simon", "Couch", , "simonpatrickcouch@gmail.com", role = c("aut", "cre"))
+Description: Benchmarking a generalized meta-learner.
+License: MIT (see file LICENSE)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.0.0
+Depends: 
+    tidymodels
+Imports: 
+    agua,
+    baguette,
+    bonsai,
+    broom,
+    butcher,
+    censored,
+    cli,
+    conflicted,
+    dials,
+    discrim,
+    dplyr,
+    embed,
+    future,
+    ggplot2,
+    hardhat,
+    infer,
+    KingCountyHouses,
+    modeldata,
+    multilevelmod,
+    ongoal,
+    parallelly,
+    parsnip,
+    plsmod,
+    poissonreg,
+    purrr,
+    recipes,
+    rlang,
+    rsample,
+    rstudioapi,
+    rules,
+    sessioninfo,
+    stacks,
+    tibble,
+    tidyr,
+    tune,
+    workflows,
+    workflowsets,
+    yardstick
+Suggests:
+    pak
+Remotes:
+    tidymodels/stacks@general-meta,
+    topepo/KingCountyHouses,
+    topepo/ongoal

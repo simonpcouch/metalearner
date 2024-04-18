@@ -17,6 +17,9 @@ following code:
 pak::pak("tidymodels/stacks@general-meta")
 ```
 
+Install of the dependencies needed to run this experiment with
+`pak::local_install_dev_deps()`.
+
 ## Structure
 
 The `analyses` folder contains a series of scripts that benchmark model
