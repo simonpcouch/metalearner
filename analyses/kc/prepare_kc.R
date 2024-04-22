@@ -147,6 +147,6 @@ save(
 sessioninfo::session_info()
 
 if (!interactive()) {
-  q(save = "no")
+  
 }
 
