@@ -25,8 +25,8 @@ if (!dir.exists(fits_dir)) {
 n <- 50000
 
 set.seed(1)
-class_sim_caret <- 
-  sim_classification(n, num_linear = 25) %>% 
+class_sim_caret <-
+  sim_classification(n, num_linear = 25) %>%
   bind_cols(
     sim_noise(n, num_vars = 50, cov_type = "toeplitz", cov_param = 1 / 2)
   )
@@ -37,7 +37,7 @@ caret_split <- initial_split(class_sim_caret, strata = class)
 train <- training(caret_split)
 test  <- testing(caret_split)
 
-set.seed(1702) 
+set.seed(1702)
 caret_rs <- vfold_cv(train, strata = class)
 
 # ------------------------------------------------------------------------------
@@ -78,13 +78,13 @@ resamp_ctrl <-
 
 # ------------------------------------------------------------------------------
 
-glmn_spec <- 
-  logistic_reg(penalty = tune(), mixture = tune()) %>% 
+glmn_spec <-
+  logistic_reg(penalty = tune(), mixture = tune()) %>%
   set_engine("glmnet")
 
-glmn_spline_wflow <- 
-  workflow() %>% 
-  add_model(glmn_spec) %>% 
+glmn_spline_wflow <-
+  workflow() %>%
+  add_model(glmn_spec) %>%
   add_recipe(basic_recipe)
 
 set.seed(391)
@@ -121,6 +121,8 @@ save(
 
 # ------------------------------------------------------------------------------
 
+plan(sequential)
+
 svm_spec <-
   svm_rbf(cost = tune(), rbf_sigma = tune()) %>%
   set_mode("classification")
@@ -148,18 +150,19 @@ save(
 
 # ------------------------------------------------------------------------------
 
+plan(multisession, workers = n_workers())
 
 nnet_spec <-
   mlp(hidden_units = tune::tune(),
       penalty = tune::tune(),
       epochs = tune()
   ) %>%
-  set_engine("nnet", MaxNWts = 10000) %>% 
+  set_engine("nnet", MaxNWts = 10000) %>%
   set_mode('classification')
 
-nnet_param <- 
-  nnet_spec %>% 
-  extract_parameter_set_dials() %>% 
+nnet_param <-
+  nnet_spec %>%
+  extract_parameter_set_dials() %>%
   update(hidden_units = hidden_units(c(2, 25)))
 
 nnet_workflow <-
@@ -248,7 +251,7 @@ save(
 lgb_spec <-
   boost_tree(trees = tune(), min_n = tune(), tree_depth = tune(), learn_rate = tune(),
              loss_reduction = tune(), sample_size = tune(), mtry = tune()) %>%
-  set_engine("lightgbm", num_threads = 1) %>% 
+  set_engine("lightgbm", num_threads = 1) %>%
   set_mode("classification")
 
 lgb_param <-
