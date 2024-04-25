@@ -21,6 +21,7 @@ enframe_as_wfs <- function(tuning_res) {
 # given a directory, read each workflow set row in the folder, row-bind together
 read_as_workflow_set <- function(dir) {
   wflow_files <- list.files(dir, full.names = TRUE)
+  wflow_files <- grep("\\.RData", wflow_files, value = TRUE)
 
   wflow_rows <- lapply(wflow_files, get_object)
 
