@@ -1,5 +1,5 @@
-source_safely <- function(file) {
-  tryCatch({source(file); return(TRUE)}, error = function(e) {FALSE})
+r_cmd_batch <- function(file) {
+  system(paste0("R CMD BATCH ", file, " ", file, "out"))
 }
 
 source("helpers.R")
@@ -12,7 +12,7 @@ prepare_files <-
     recursive = TRUE
   )
 
-lapply(prepare_files, source_safely)
+lapply(prepare_files, r_cmd_batch)
 
 # fit members for all resampled specifications. members are fitted regardless
 # of whether the meta-learner would include them so that we can reuse those member
@@ -24,7 +24,7 @@ fit_members_files <-
     recursive = TRUE
   )
 
-lapply(fit_members_files, source_safely)
+lapply(fit_members_files, r_cmd_batch)
 
 # blend and benchmark each proposed meta-learner -------------------------------
 blend_files <-
@@ -34,4 +34,4 @@ blend_files <-
     recursive = TRUE
   )
 
-lapply(blend_files, source_safely)
+lapply(blend_files, r_cmd_batch)
