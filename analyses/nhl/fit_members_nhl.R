@@ -13,14 +13,14 @@ library(butcher)
 
 # generate a minimal, unpenalized model stack in order to
 # generate each model specification
-nhl_data_stack <- 
+nhl_data_stack <-
   stacks() %>%
   add_candidates(nhl_set)
 
 set.seed(1)
 nhl_model_stack <-
   nhl_data_stack %>%
-  blend_predictions(times = 3, meta_learner = linear_reg()) %>%
+  blend_predictions(times = 3, meta_learner = logistic_reg()) %>%
   fit_members()
 
 # dbarts::bart doesn't have a butcher method, and this element
@@ -29,7 +29,7 @@ rm_yhat_train <- function(x) {
   if (inherits(x$fit$fit$fit, "bart")) {
     x$fit$fit$fit$yhat.train <- NULL
   }
-  
+
   x
 }
 
