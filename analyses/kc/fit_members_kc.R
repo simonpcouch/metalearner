@@ -10,10 +10,14 @@ library(rules)
 library(embed)
 library(stacks)
 library(butcher)
+library(future)
+
+plan(multisession, workers = n_workers())
+
 
 # generate a minimal, unpenalized model stack in order to
 # generate each model specification
-kc_data_stack <- 
+kc_data_stack <-
   stacks() %>%
   add_candidates(kc_set)
 
@@ -29,7 +33,7 @@ rm_yhat_train <- function(x) {
   if (inherits(x$fit$fit$fit, "bart")) {
     x$fit$fit$fit$yhat.train <- NULL
   }
-  
+
   x
 }
 

@@ -10,6 +10,9 @@ library(rules)
 library(embed)
 library(stacks)
 library(butcher)
+library(future)
+
+plan(multisession, workers = n_workers())
 
 # generate a minimal, unpenalized model stack in order to
 # generate each model specification
