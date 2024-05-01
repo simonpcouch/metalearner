@@ -121,35 +121,6 @@ save(
 
 # ------------------------------------------------------------------------------
 
-plan(sequential)
-
-svm_spec <-
-  svm_rbf(cost = tune(), rbf_sigma = tune()) %>%
-  set_mode("classification")
-
-svm_workflow <-
-  workflow() %>%
-  add_recipe(basic_recipe) %>%
-  add_model(svm_spec)
-
-set.seed(9264)
-svm_res <-
-  tune_grid(
-    svm_workflow,
-    resamples = caret_rs,
-    grid = 25,
-    control = grid_ctrl
-  )
-
-save(
-  svm_res,
-  file = file.path(fits_dir, "caret_svm.RData"),
-  compress = "xz",
-  compression_level = 9
-)
-
-# ------------------------------------------------------------------------------
-
 plan(multisession, workers = n_workers())
 
 nnet_spec <-
