@@ -12,7 +12,7 @@ library(stacks)
 library(butcher)
 library(future)
 
-plan(multicore, workers = n_workers())
+plan(multisession, workers = n_workers())
 
 # generate a minimal, unpenalized model stack in order to
 # generate each model specification
