@@ -1,5 +1,5 @@
 r_cmd_batch <- function(file) {
-  system(paste0("R CMD BATCH ", file, " ", file, "out"))
+  system(paste0("R CMD BATCH --vanilla ", file, " ", file, "out"))
 }
 
 source("helpers.R")
@@ -11,6 +11,8 @@ prepare_files <-
     full.names = TRUE,
     recursive = TRUE
   )
+
+prepare_files <- prepare_files[!grepl("Rout", prepare_files)]
 
 lapply(prepare_files, r_cmd_batch)
 
@@ -24,6 +26,8 @@ fit_members_files <-
     recursive = TRUE
   )
 
+fit_members_files <- fit_members_files[!grepl("Rout", fit_members_files)]
+
 lapply(fit_members_files, r_cmd_batch)
 
 # blend and benchmark each proposed meta-learner -------------------------------
@@ -33,5 +37,7 @@ blend_files <-
     full.names = TRUE,
     recursive = TRUE
   )
+
+blend_files <- blend_files[!grepl("Rout", blend_files)]
 
 lapply(blend_files, r_cmd_batch)
