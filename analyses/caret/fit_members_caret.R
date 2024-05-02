@@ -12,7 +12,7 @@ library(stacks)
 library(butcher)
 library(future)
 
-plan(multisession, workers = n_workers())
+plan(multicore, workers = n_workers())
 
 # generate a minimal, unpenalized model stack in order to
 # generate each model specification
@@ -52,3 +52,5 @@ for (i in seq_along(caret_member_fits)) {
   assign(obj_nm, value = caret_member_fits[[i]])
   save(list = obj_nm, file = file_nm, compress = "xz", compression_level = 9)
 }
+
+plan(sequential)

@@ -12,7 +12,7 @@ library(stacks)
 library(butcher)
 library(future)
 
-plan(multisession, workers = n_workers())
+plan(multicore, workers = n_workers())
 
 
 # generate a minimal, unpenalized model stack in order to
@@ -53,3 +53,5 @@ for (i in seq_along(kc_member_fits)) {
   assign(obj_nm, value = kc_member_fits[[i]])
   save(list = obj_nm, file = file_nm, compress = "xz", compression_level = 9)
 }
+
+plan(sequential)
