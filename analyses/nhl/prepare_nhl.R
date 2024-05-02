@@ -93,22 +93,22 @@ resamp_ctrl <-
 
 # ------------------------------------------------------------------------------
 
-glmn_spec <- 
-  logistic_reg(penalty = tune(), mixture = tune()) %>% 
+glmn_spec <-
+  logistic_reg(penalty = tune(), mixture = tune()) %>%
   set_engine("glmnet")
 
 glmn_recipe <-
   effects_encode_recipe %>%
   step_dummy(all_nominal_predictors()) %>%
-  step_zv(all_predictors()) %>% 
-  step_ns(angle, deg_free = 50) %>% 
-  step_ns(coord_x, deg_free = 50) %>% 
+  step_zv(all_predictors()) %>%
+  step_ns(angle, deg_free = 50) %>%
+  step_ns(coord_x, deg_free = 50) %>%
   step_ns(game_seconds, deg_free = 50) %>%
   step_normalize(all_numeric_predictors())
 
-glmn_spline_wflow <- 
-  workflow() %>% 
-  add_model(glmn_spec) %>% 
+glmn_spline_wflow <-
+  workflow() %>%
+  add_model(glmn_spec) %>%
   add_recipe(glmn_recipe)
 
 set.seed(391)
@@ -123,32 +123,6 @@ glmn_spline_res <-
 save(
   glmn_spline_res,
   file = file.path(fits_dir, "nhl_glmnet.RData"),
-  compress = "xz",
-  compression_level = 9
-)
-
-# ------------------------------------------------------------------------------
-
-gam_f <- 
-  on_goal ~ s(coord_x) + s(angle) + s(game_seconds) + goal_difference + 
-  shooter + goaltender + period +  extra_attacker + season + behind_goal_line + 
-  home_skaters + away_skaters
-
-gam_spec <-
-  gen_additive_mod(select_features = tune()) %>%
-  set_mode("classification")
-
-gam_workflow <-
-  workflow() %>%
-  add_recipe(effects_encode_recipe) %>%
-  add_model(gam_spec, formula = gam_f)
-
-gam_res <-
-  tune_grid(gam_workflow, resamples = nhl_val_split, control = grid_ctrl)
-
-save(
-  gam_res,
-  file = file.path(fits_dir, "nhl_gam.RData"),
   compress = "xz",
   compression_level = 9
 )
@@ -234,7 +208,7 @@ save(
 lgb_spec <-
   boost_tree(trees = tune(), min_n = tune(), tree_depth = tune(), learn_rate = tune(),
              loss_reduction = tune(), sample_size = tune(), mtry = tune()) %>%
-  set_engine("lightgbm", num_threads = 1) %>% 
+  set_engine("lightgbm", num_threads = 1) %>%
   set_mode("classification")
 
 lgb_param <-
