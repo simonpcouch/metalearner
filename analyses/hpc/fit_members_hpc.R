@@ -23,7 +23,10 @@ hpc_data_stack <-
 set.seed(1)
 hpc_model_stack <-
   hpc_data_stack %>%
-  blend_predictions(times = 3, meta_learner = multinom_reg()) %>%
+  blend_predictions(
+    times = 3,
+    meta_learner = multinom_reg() %>% set_engine("nnet", MaxNWts = 1e5)
+  ) %>%
   fit_members()
 
 # dbarts::bart doesn't have a butcher method, and this element
