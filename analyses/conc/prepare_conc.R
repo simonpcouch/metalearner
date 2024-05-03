@@ -58,11 +58,6 @@ conc_rec <-
   step_YeoJohnson(all_numeric_predictors()) %>%
   step_normalize(all_numeric_predictors())
 
-conc_quad_rec <-
-  conc_rec %>%
-  step_interact(~ all_predictors():all_predictors()) %>%
-  step_poly(all_of(predictors), degree = 2)
-
 # ------------------------------------------------------------------------------
 
 bag_tree_rpart_spec <-
@@ -113,10 +108,6 @@ decision_tree_rpart_spec <-
   set_engine('rpart') %>%
   set_mode('regression')
 
-gam_mgcv_spec <-
-  gen_additive_mod(select_features = tune(), adjust_deg_free = tune()) %>%
-  set_mode("regression")
-
 linear_reg_glmnet_spec <-
   linear_reg(penalty = tune(), mixture = tune()) %>%
   set_engine('glmnet')
@@ -158,18 +149,6 @@ svm_rbf_kernlab_spec <-
 
 # ------------------------------------------------------------------------------
 
-gam_wflow <-
-  workflow() %>%
-  add_model(
-    gam_mgcv_spec,
-    formula = compressive_strength ~ s(cement) + s(blast_furnace_slag) +
-      s(fly_ash) + s(water) + s(superplasticizer) + s(coarse_aggregate) +
-      s(fine_aggregate) + s(age)
-  ) %>%
-  add_recipe(conc_rec)
-
-# ------------------------------------------------------------------------------
-
 main_models <-
   list(
     bag_tree = bag_tree_rpart_spec,
@@ -185,8 +164,6 @@ main_models <-
     svm_rbf = svm_rbf_kernlab_spec
   )
 
-quad_models <- list(linear_reg = linear_reg_glmnet_spec)
-
 # ------------------------------------------------------------------------------
 
 
@@ -195,23 +172,7 @@ conc_wflow_set <-
     preproc = list(plain = conc_rec),
     models = main_models
   ) %>%
-  bind_rows(
-    workflow_set(
-      preproc = list(quadratic = conc_quad_rec),
-      models = quad_models
-    )
-  ) %>%
   option_add(id = "plain_mlp", param_info = mlp_param)
-
-
-set.seed(1703)
-gam_res <-
-  gam_wflow %>%
-  tune_grid(
-    resamples = conc_rs,
-    grid = 25,
-    control = grid_ctrl
-  )
 
 conc_res <-
   conc_wflow_set %>%
@@ -221,8 +182,7 @@ conc_res <-
     grid = 25,
     resamples = conc_rs,
     control = grid_ctrl
-  ) %>%
-  bind_rows(as_workflow_set(plain_gam = gam_res))
+  )
 
 # ------------------------------------------------------------------------------
 # Save entries in the workflow set separately to reduce the size of the RData file
