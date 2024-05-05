@@ -19,10 +19,10 @@ wf_set <- read_as_workflow_set(file.path("analyses", dataset, "candidate_fits"))
 
 load(file.path("analyses", dataset, paste0(dataset, "_data.RData")))
 
- 
+
 
 # add candidates to a data stack
-data_stack <- 
+data_stack <-
   stacks() %>%
   add_candidates(wf_set)
 
@@ -30,9 +30,9 @@ data_stack <-
 source(file.path("meta_learners", "specs", paste0("make_spec_", spec, ".R")))
 source(file.path("meta_learners", "recipes", paste0("make_recipe_", recipe, ".R")))
 
-meta_learner <- 
+meta_learner <-
   workflow() %>%
-  add_model(make_spec()) %>%
+  add_model(make_spec() %>% set_mode("classification")) %>%
   add_recipe(make_recipe(as.formula(paste0(attr(data_stack, "outcome"), ' ~ .')), data_stack))
 
 # record time-to-fit for meta-learner fitting
@@ -56,17 +56,20 @@ res_metric <-
     estimate = .pred
   )
 
-res <- 
+res <-
   list(
-    dataset = dataset, 
+    dataset = dataset,
     recipe = recipe,
     spec = spec,
-    time_to_fit = timing[["elapsed"]], 
-    metric = metric, 
+    time_to_fit = timing[["elapsed"]],
+    metric = metric,
     metric_value = res_metric$.estimate
   )
 
 save(
-  res, 
+  res,
   file = file.path("metrics", paste0(dataset, "_", recipe, "_", spec, ".RData"))
 )
+
+plan(sequential)
+

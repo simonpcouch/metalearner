@@ -62,3 +62,6 @@ save(
   res, 
   file = file.path("metrics", paste0(dataset, "_", recipe, "_", spec, ".RData"))
 )
+
+plan(sequential)
+
