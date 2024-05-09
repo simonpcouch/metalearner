@@ -5,6 +5,15 @@ get_object <- function(x) {
   env[[nm]]
 }
 
+get_named_object <- function(x) {
+  env <- new.env()
+  nm <- load(x, env)[1]
+  res <- list(env[[nm]])
+  names(res) <- nm
+  res
+}
+
+
 # takes a set of tuning results and enframes them as a row of a workflow set
 enframe_as_wfs <- function(tuning_res) {
   res <-
@@ -42,6 +51,19 @@ read_as_workflow_set <- function(dir) {
 # add the pre-fitted members to the model stack
 add_members <- function(model_stack, dataset) {
   fits_path <- file.path("analyses", dataset, "member_fits")
+
+  if (model_stack$mode == "classification") {
+    members_paths <- list.files(file.path(fits_path), full.names = TRUE)
+    members_paths <- members_paths[grepl("RData", members_paths)]
+
+    for (member_path in members_paths) {
+      loc <- gsub(".RData", "", member_path, fixed = TRUE)
+      member_fit <- get_named_object(member_path)
+      model_stack[["member_fits"]][[names(member_fit)]] <- member_fit[[1]]
+    }
+
+    return(model_stack)
+  }
 
   if (inherits(model_stack, "linear_stack")) {
     needed_members <-
