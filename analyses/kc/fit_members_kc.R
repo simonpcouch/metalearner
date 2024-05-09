@@ -12,7 +12,7 @@ library(stacks)
 library(butcher)
 library(future)
 
-plan(multisession, workers = n_workers())
+library(doMC); registerDoMC(n_workers())
 
 
 # generate a minimal, unpenalized model stack in order to

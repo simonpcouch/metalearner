@@ -12,7 +12,7 @@ library(future)
 tidymodels_prefer()
 theme_set(theme_bw())
 options(pillar.advice = FALSE)
-plan(multisession, workers = n_workers())
+library(doMC); registerDoMC(n_workers())
 
 fits_dir <- file.path("analyses", "caret", "candidate_fits")
 
@@ -121,7 +121,7 @@ save(
 
 # ------------------------------------------------------------------------------
 
-plan(multisession, workers = n_workers())
+library(doMC); registerDoMC(n_workers())
 
 nnet_spec <-
   mlp(hidden_units = tune::tune(),

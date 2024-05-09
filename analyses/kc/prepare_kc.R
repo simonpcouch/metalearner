@@ -12,7 +12,7 @@ library(KingCountyHouses)
 tidymodels_prefer()
 theme_set(theme_bw())
 options(pillar.advice = FALSE)
-plan(multisession, workers = n_workers())
+library(doMC); registerDoMC(n_workers())
 
 fits_dir <- file.path("analyses", "kc", "candidate_fits")
 

@@ -8,7 +8,7 @@ library(future)
 
 tidymodels_prefer()
 options(pillar.advice = FALSE)
-plan(multisession, workers = n_workers())
+library(doMC); registerDoMC(n_workers())
 
 recipe <- "basic"
 spec <- "xgb"
