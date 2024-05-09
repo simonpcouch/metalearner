@@ -1,5 +1,16 @@
 r_cmd_batch <- function(file) {
-  system(paste0("R CMD BATCH --vanilla ", file, " ", file, "out"))
+  cat(paste0("Running ", basename(file), "\n"))
+  res <-
+    system(
+      paste0("R CMD BATCH --vanilla ", file, " ", file, "out"),
+      ignore.stderr = TRUE, ignore.stdout = TRUE
+    )
+
+  if (res != 0) {
+    cat(paste0("   Failed on ", basename(file), "\n"))
+  }
+
+  setNames(res, file)
 }
 
 source("helpers.R")
@@ -39,5 +50,7 @@ blend_files <-
   )
 
 blend_files <- blend_files[!grepl("Rout", blend_files)]
+
+blend_files
 
 lapply(blend_files, r_cmd_batch)
