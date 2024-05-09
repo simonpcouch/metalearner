@@ -25,7 +25,7 @@ hpc_model_stack <-
   hpc_data_stack %>%
   blend_predictions(
     times = 3,
-    meta_learner = meta_learner = null_model() %>% set_engine("parsnip"))
+    meta_learner = null_model() %>% set_engine("parsnip")
   ) %>%
   fit_members()
 
