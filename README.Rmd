@@ -37,7 +37,7 @@ The structure of each sub-folder in `analyses`, for a dataset called `dataset`, 
     - `blend_dataset_preproc1_model2.R`
     - ...
    
-The top-level folder `metrics` contains the "output" from each of these experiments, a six-element list with the dataset name, preprocessor and model specification for the meta-learner, time to fit, test set performance metric, and metric value. The files are named in the format `dataset_preproc_model.RData`.
+The top-level folder `metrics` contains the "output" from each of these experiments, a five-element list with the dataset name, preprocessor and model specification for the meta-learner, time to fit, and test set performance metrics. The files are named in the format `dataset_preproc_model.RData`.
 
 The top-level folder `meta_learners` contains the code used to generate the proposed preprocessors and model specifications. 
 
