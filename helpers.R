@@ -15,10 +15,10 @@ get_named_object <- function(x) {
 
 
 # takes a set of tuning results and enframes them as a row of a workflow set
-enframe_as_wfs <- function(tuning_res) {
+enframe_as_wfs <- function(tuning_res, wflow_id) {
   res <-
     tibble::tibble(
-      wflow_id = recipes::rand_id("res"),
+      wflow_id = wflow_id,
       info = NA,
       option = NA,
       result = list(tuning_res)
@@ -35,7 +35,7 @@ read_as_workflow_set <- function(dir) {
   wflow_rows <- lapply(wflow_files, get_object)
 
   if (!inherits(wflow_rows[[1]], "workflow_set")) {
-    wflow_rows <- lapply(wflow_rows, enframe_as_wfs)
+    wflow_rows <- purrr::map2(wflow_rows, gsub("\\.RData", "", basename(wflow_files)), enframe_as_wfs)
   }
 
   res <- dplyr::bind_rows(wflow_rows)
@@ -95,7 +95,7 @@ add_members <- function(model_stack, dataset) {
 # note that this repository set the number of threads for engines that
 # support parallel processing to 1 (i.e. `nthreads = 1` for xgboost),
 # relying instead on tidymodels' integration with future.
-n_workers <- function() {16}
+n_workers <- function() {5}
 
 # load needed parsnip + recipes extension packages
 library(baguette)
