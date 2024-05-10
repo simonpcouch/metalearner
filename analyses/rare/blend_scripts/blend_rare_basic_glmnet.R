@@ -37,24 +37,27 @@ timing <- system.time({
 model_stack_fitted <-
   add_members(model_stack, dataset)
 
-metric <- model_stack$model_metrics[[1]]$.metric[[1]]
+ms <- metric_set(accuracy, brier_class, roc_auc)
 
 res_metric <-
-  predict(model_stack_fitted, test) %>%
-  bind_cols(test) %>%
-  rmse(
+  bind_cols(
+    predict(model_stack_fitted, test, type = "prob"),
+    predict(model_stack_fitted, test, type = "class"),
+    test
+  ) %>%
+  ms(
     truth = !!attr(data_stack, "outcome"),
-    estimate = .pred
+    estimate = .pred_class,
+    c(contains(".pred_"), -.pred_class)
   )
 
-res <- 
+res <-
   list(
-    dataset = dataset, 
+    dataset = dataset,
     recipe = recipe,
     spec = spec,
-    time_to_fit = timing[["elapsed"]], 
-    metric = metric, 
-    metric_value = res_metric$.estimate
+    time_to_fit = timing[["elapsed"]],
+    metric = res_metric
   )
 
 save(
