@@ -57,7 +57,7 @@ res_metric <-
   ms(
     truth = !!attr(data_stack, "outcome"),
     estimate = .pred_class,
-    c(contains(".pred_"), -.pred_class)
+    paste0(".pred_", levels(test[[attr(data_stack, "outcome")]])[1])
   )
 
 res <-

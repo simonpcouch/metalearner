@@ -23,7 +23,7 @@ load(file.path("analyses", dataset, paste0(dataset, "_data.RData")))
 # no need to define a meta-learner--use the glmnet default.
 
 # add candidates to a data stack
-data_stack <- 
+data_stack <-
   stacks() %>%
   add_candidates(wf_set)
 
@@ -49,7 +49,7 @@ res_metric <-
   ms(
     truth = !!attr(data_stack, "outcome"),
     estimate = .pred_class,
-    c(contains(".pred_"), -.pred_class)
+    paste0(".pred_", levels(test[[attr(data_stack, "outcome")]])[1])
   )
 
 res <-
@@ -62,7 +62,7 @@ res <-
   )
 
 save(
-  res, 
+  res,
   file = file.path("metrics", paste0(dataset, "_", recipe, "_", spec, ".RData"))
 )
 
