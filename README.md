@@ -92,7 +92,8 @@ The code that I use to run the experiment is in `run.R`.
 | ID                | Recipe                       | Model Spec                              |
 |:------------------|:-----------------------------|:----------------------------------------|
 | `basic_glmnet`    | Minimal                      | Penalized Linear Regression             |
-| `basic_xgb`       | Minimal                      | Boosted Tree                            |
+| `basic_xgb`       | Minimal                      | Boosted Tree (via XGBoost)              |
+| `basic_lgb`       | Minimal                      | Boosted Tree (via LightGBM)             |
 | `normalize_bt`    | Center + Scale               | Bagged Tree                             |
 | `normalize_bm`    | Center + Scale               | Bagged Mars                             |
 | `normalize_svm`   | Center + Scale               | Support Vector Machine (via RBF)        |

@@ -1,0 +1,78 @@
+source("helpers.R")
+
+library(tidymodels)
+library(stacks)
+library(embed)
+library(future)
+
+tidymodels_prefer()
+options(pillar.advice = FALSE)
+library(doMC); registerDoMC(n_workers())
+
+recipe <- "basic"
+spec <- "lgb"
+dataset <- "hpc"
+
+source("helpers.R")
+
+wf_set <- read_as_workflow_set(file.path("analyses", dataset, "candidate_fits"))
+
+load(file.path("analyses", dataset, paste0(dataset, "_data.RData")))
+
+
+
+# add candidates to a data stack
+data_stack <-
+  stacks() %>%
+  add_candidates(wf_set)
+
+# define meta-learner
+source(file.path("meta_learners", "specs", paste0("make_spec_", spec, ".R")))
+source(file.path("meta_learners", "recipes", paste0("make_recipe_", recipe, ".R")))
+
+meta_learner <-
+  workflow() %>%
+  add_model(make_spec() %>% set_mode("classification")) %>%
+  add_recipe(make_recipe(as.formula(paste0(attr(data_stack, "outcome"), ' ~ .')), data_stack))
+
+# record time-to-fit for meta-learner fitting
+timing <- system.time({
+  set.seed(1)
+  model_stack <-
+    data_stack %>%
+    blend_predictions(meta_learner = meta_learner)
+})
+
+model_stack_fitted <-
+  add_members(model_stack, dataset)
+
+ms <- metric_set(accuracy, brier_class, roc_auc)
+
+res_metric <-
+  bind_cols(
+    predict(model_stack_fitted, test, type = "prob"),
+    predict(model_stack_fitted, test, type = "class"),
+    test
+  ) %>%
+  ms(
+    truth = !!attr(data_stack, "outcome"),
+    estimate = .pred_class,
+    c(contains(".pred_"), -.pred_class)
+  )
+
+res <-
+  list(
+    dataset = dataset,
+    recipe = recipe,
+    spec = spec,
+    time_to_fit = timing[["elapsed"]],
+    metric = res_metric
+  )
+
+save(
+  res,
+  file = file.path("metrics", paste0(dataset, "_", recipe, "_", spec, ".RData"))
+)
+
+plan(sequential)
+

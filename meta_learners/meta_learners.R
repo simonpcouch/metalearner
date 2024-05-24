@@ -15,10 +15,10 @@ spec_bt <-
 
 spec_bm <-
   bag_mars(num_terms = tune(), prod_degree = tune()) %>%
-  set_engine("earth") %>% 
+  set_engine("earth") %>%
   set_mode("regression")
 
-spec_svm <- 
+spec_svm <-
   svm_rbf(cost = tune(), rbf_sigma = tune(), margin = tune()) %>%
   set_mode("regression")
 
@@ -33,11 +33,17 @@ spec_xgb <-
   set_engine("xgboost") %>%
   set_mode("regression")
 
+spec_lgb <-
+  boost_tree(trees = tune(), min_n = tune(), tree_depth = tune(),
+             learn_rate = tune(), stop_iter = 10) %>%
+  set_engine("lightgbm") %>%
+  set_mode("regression")
+
 
 meta_learners <-
   workflow_set(
     preproc = list(basic = rec_basic),
-    models = list(linear_reg = spec_glmnet, boost_tree = spec_xgb)
+    models = list(linear_reg = spec_glmnet, boost_tree_xgb = spec_xgb, boost_tree_lgb = spec_lgb)
   ) %>%
   bind_rows(
     workflow_set(
