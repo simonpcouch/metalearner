@@ -57,9 +57,8 @@ add_members <- function(model_stack, dataset) {
     members_paths <- members_paths[grepl("RData", members_paths)]
 
     for (member_path in members_paths) {
-      loc <- gsub(".RData", "", member_path, fixed = TRUE)
-      member_fit <- get_named_object(member_path)
-      model_stack[["member_fits"]][[names(member_fit)]] <- member_fit[[1]]
+      member_fit <- get_object(member_path)
+      model_stack[["member_fits"]][[gsub(".RData", "", basename(member_path))]] <- member_fit
     }
 
     return(model_stack)
